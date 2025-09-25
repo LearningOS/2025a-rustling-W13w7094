@@ -5,8 +5,17 @@
 */
 // I AM NOT DONE
 
-fn sort<T>(array: &mut [T]){
-	//TODO
+fn sort<T:PartialOrd>(array: &mut [T]){
+    
+	for i in 0..array.len() {
+        let mut  swp = false;
+        for j in 0..array.len()-1 {
+            if array[j] > array[j+1] {
+                array.swap(j, j+1);
+                swp = true;
+            }
+        }
+    }
 }
 #[cfg(test)]
 mod tests {
