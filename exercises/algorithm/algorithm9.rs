@@ -2,7 +2,7 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
+
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -36,9 +36,22 @@ where
         self.len() == 0
     }
 
-    pub fn add(&mut self, value: T) {
-        //TODO
+   pub fn add(&mut self, value: T) {
+    self.items.push(value); // Add to the end
+    self.count += 1;        // Increment count
+    let mut idx = self.count; // Start at the new element's index
+
+    // Bubble up: compare with parent and swap if necessary
+    while idx > 1 {
+        let parent_idx = self.parent_idx(idx);
+        let should_swap = (self.comparator)(&self.items[idx], &self.items[parent_idx]);
+        if !should_swap {
+            break;
+        }
+        self.items.swap(idx, parent_idx);
+        idx = parent_idx;
     }
+}
 
     fn parent_idx(&self, idx: usize) -> usize {
         idx / 2
@@ -57,8 +70,23 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        let left_idx = self.left_child_idx(idx);
+        let right_idx = self.right_child_idx(idx);
+        if !self.children_present(idx) {
+            return left_idx;
+        }
+		
+        if right_idx > self.count {
+            return left_idx;
+            
+        }
+
+        if (self.comparator)(&self.items[left_idx], &self.items[right_idx]) {
+            left_idx
+        } else {
+            right_idx
+            
+        }
     }
 }
 
@@ -84,8 +112,28 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.is_empty() {
+            return None;
+        }
+        let result = self.items.swap_remove(1); // Remove root and replace with last element
+        self.count -= 1;
+
+        // If heap is not empty, bubble down the new root
+        if self.count > 0 {
+            let mut idx = 1;
+            while self.children_present(idx) {
+                let smallest_child = self.smallest_child_idx(idx);
+                if !(self.comparator)(&self.items[smallest_child], &self.items[idx]) {
+                    break; // Heap property satisfied
+                }
+                self.items.swap(idx, smallest_child);
+                idx = smallest_child;
+            }
+        }
+
+        Some(result)
+            
+        
     }
 }
 
